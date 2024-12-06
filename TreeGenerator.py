@@ -1,14 +1,94 @@
 import os
 import random
-from typing import List, Tuple
 import pygame
+
+from typing import List, Tuple
+
 
 def play_sound(filepath):
     pygame.mixer.init()
     pygame.mixer.music.load(filepath)
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(loops=-1)
+
+def clear_console():
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
+
+def select_background_music():
+
+    clear_console()
+
+    print("1 - Cristano_s_Ronaldo_siiiiii_but_it_s_jingle_bell_rock\n")
+    print("2 - Feliz_Bottom_Jeans_-_Jose_Feliciano_1970\n")
+    print("3 - toad_sings_all_i_want_for_christmas_is_you\n")
+    print("4 - Exit to main menu\n\n")
+
+    songpath = 'D:\LucasRandomProjects\TreeGenerator\Songs'
+    songnumber = int(input("Enter the number of the background song you want to play: ") or "1")
+    songname = ''
+
+    match songnumber:
+        case 1:
+            songname = 'Cristano_s_Ronaldo_siiiiii_but_it_s_jingle_bell_rock.mp3'
+        case 2:
+            songname = 'Feliz_Bottom_Jeans_-_Jose_Feliciano_1970.mp3'
+        case 3:
+            songname = 'toad_sings_all_i_want_for_christmas_is_you.mp3'
+        case 4:
+            main_menu()
+        case _:
+            print("Please select a valid option")
+            select_background_music()
 
 
+    play_sound(os.path.join(songpath, songname))
+    main_menu()
+
+def main_menu():
+
+    clear_console()
+
+    print("1 - Background Music\n")
+    print("2 - Create Tree\n")
+    print("3 - Exit the program\n\n")
+
+    option = int(input("Select a number option: "))
+
+    match option:
+        case 1:
+            select_background_music()
+        case 2:
+            try_generate_tree()
+        case 3:
+            exit()
+        case _:
+            print("Select valid option")
+            main_menu()
+
+def try_generate_tree():
+    try:
+        height = int(input("Enter the height of the tree (recommended 10-20): "))
+        if height <= 0:
+            raise ValueError("Height must be positive")
+        
+        symbol = input("Enter the base symbol to use (default is *): ") or '*'
+        
+        # Generate and display the tree
+        tree_pattern = generate_tree(height, symbol)
+        
+        # Ask if user wants to save as PNG
+        save_choice = input("\nWould you like to save the tree as a PNG? (y/n): ").lower()
+        if save_choice.startswith('y'):
+            filename = input("Enter the output filename (default is christmas_tree.png): ") or 'christmas_tree.png'
+            save_as_png(tree_pattern, height, filename)
+        
+    except ValueError as e:
+        print(f"Error: {e}")
+        print("Please enter a valid positive number for height.")
+
+    main_menu()
 
 def generate_tree(height: int, symbol: str = '*') -> List[Tuple[str, List[Tuple[str, str]]]]:
     """
@@ -166,44 +246,14 @@ def save_as_png(tree_pattern: List[Tuple[str, List[Tuple[str, str]]]], height: i
     return True
 
 def main():
+
+    clear_console()
+
     print("Christmas Tree Generator")
-    print("-----------------------")
+    print("-----------------------\n")
 
-    songpath = 'D:\LucasRandomProjects\TreeGenerator\songs'
-    print("1 - Cristano_s_Ronaldo_siiiiii_but_it_s_jingle_bell_rock\n2 - Feliz_Bottom_Jeans_-_Jose_Feliciano_1970\n3 - toad_sings_all_i_want_for_christmas_is_you")
-    songnumber = int(input("Enter the number of the song you want to play: ") or "1")
-    songname = ''
+    main_menu()
 
-    match songnumber:
-        case 1:
-            songname = 'Cristano_s_Ronaldo_siiiiii_but_it_s_jingle_bell_rock.mp3'
-        case 2:
-            songname = 'Feliz_Bottom_Jeans_-_Jose_Feliciano_1970.mp3'
-        case 3:
-            songname = 'toad_sings_all_i_want_for_christmas_is_you.mp3'
-
-
-    play_sound(os.path.join(songpath, songname))
-    
-    try:
-        height = int(input("Enter the height of the tree (recommended 10-20): "))
-        if height <= 0:
-            raise ValueError("Height must be positive")
-        
-        symbol = input("Enter the base symbol to use (default is *): ") or '*'
-        
-        # Generate and display the tree
-        tree_pattern = generate_tree(height, symbol)
-        
-        # Ask if user wants to save as PNG
-        save_choice = input("\nWould you like to save the tree as a PNG? (y/n): ").lower()
-        if save_choice.startswith('y'):
-            filename = input("Enter the output filename (default is christmas_tree.png): ") or 'christmas_tree.png'
-            save_as_png(tree_pattern, height, filename)
-        
-    except ValueError as e:
-        print(f"Error: {e}")
-        print("Please enter a valid positive number for height.")
 
 if __name__ == "__main__":
     main()
