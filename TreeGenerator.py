@@ -33,7 +33,10 @@ def select_background_music():
     print("1 - Cristano_s_Ronaldo_siiiiii_but_it_s_jingle_bell_rock\n")
     print("2 - Feliz_Bottom_Jeans_-_Jose_Feliciano_1970\n")
     print("3 - toad_sings_all_i_want_for_christmas_is_you\n")
-    print("4 - Exit to main menu\n\n")
+    print("4 - Ed_Sheeran_Elton_John_-_Merry_Christmas_Official_Video")
+    print("5 - Jose_Feliciano_-_Feliz_Navidad_Official_Audio")
+    print("6 - Mariah_Carey_-_All_I_Want_for_Christmas_Is_You_Make_My_Wish_Come_True_Edition")
+    print("7 - Exit to main menu\n\n")
 
     songpath = 'Songs'
     songnumber = int(input("Enter the number of the background song you want to play: ") or "1")
@@ -47,6 +50,12 @@ def select_background_music():
         case 3:
             songname = 'toad_sings_all_i_want_for_christmas_is_you.mp3'
         case 4:
+            songname = 'Ed_Sheeran_Elton_John_-_Merry_Christmas_Official_Video.mp3'
+        case 5:
+            songname = 'Jose_Feliciano_-_Feliz_Navidad_Official_Audio.mp3'
+        case 6:
+            songname = 'Mariah_Carey_-_All_I_Want_for_Christmas_Is_You_Make_My_Wish_Come_True_Edition'
+        case 7:
             main_menu()
         case _:
             print("Please select a valid option")
