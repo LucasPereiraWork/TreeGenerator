@@ -5,7 +5,7 @@ a = Analysis(
     ['TreeGenerator.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('Songs', 'Songs')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

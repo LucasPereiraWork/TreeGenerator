@@ -1,6 +1,7 @@
 import os
 import random
 import pygame
+import sys
 
 from typing import List, Tuple
 
@@ -11,10 +12,19 @@ def play_sound(filepath):
     pygame.mixer.music.play(loops=-1)
 
 def clear_console():
+
     if os.name == 'nt':
         os.system('cls')
     else:
         os.system('clear')
+
+def resource_path(relative_path):
+    try:
+        # PyInstaller creates a temporary folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 def select_background_music():
 
@@ -25,7 +35,7 @@ def select_background_music():
     print("3 - toad_sings_all_i_want_for_christmas_is_you\n")
     print("4 - Exit to main menu\n\n")
 
-    songpath = 'D:\LucasRandomProjects\TreeGenerator\Songs'
+    songpath = 'Songs'
     songnumber = int(input("Enter the number of the background song you want to play: ") or "1")
     songname = ''
 
@@ -42,8 +52,8 @@ def select_background_music():
             print("Please select a valid option")
             select_background_music()
 
-
-    play_sound(os.path.join(songpath, songname))
+    sound_file_path = resource_path(os.path.join(songpath, songname))
+    play_sound(sound_file_path)
     main_menu()
 
 def main_menu():
