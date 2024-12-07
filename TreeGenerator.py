@@ -11,6 +11,13 @@ def play_sound(filepath):
     pygame.mixer.music.load(filepath)
     pygame.mixer.music.play(loops=-1)
 
+def adjust_volume(value: int):
+    if value < 0 or value > 10:
+        print("Please input valid value")
+        adjust_volume_menu()
+    pygame.mixer.music.set_volume(value * 0.1)
+    main_menu()
+
 def clear_console():
 
     if os.name == 'nt':
@@ -33,9 +40,9 @@ def select_background_music():
     print("1 - Cristano_s_Ronaldo_siiiiii_but_it_s_jingle_bell_rock\n")
     print("2 - Feliz_Bottom_Jeans_-_Jose_Feliciano_1970\n")
     print("3 - toad_sings_all_i_want_for_christmas_is_you\n")
-    print("4 - Ed_Sheeran_Elton_John_-_Merry_Christmas_Official_Video")
-    print("5 - Jose_Feliciano_-_Feliz_Navidad_Official_Audio")
-    print("6 - Mariah_Carey_-_All_I_Want_for_Christmas_Is_You_Make_My_Wish_Come_True_Edition")
+    print("4 - Ed_Sheeran_Elton_John_-_Merry_Christmas_Official_Video\n")
+    print("5 - Jose_Feliciano_-_Feliz_Navidad_Official_Audio\n")
+    print("6 - Mariah_Carey_-_All_I_Want_for_Christmas_Is_You_Make_My_Wish_Come_True_Edition\n")
     print("7 - Exit to main menu\n\n")
 
     songpath = 'Songs'
@@ -71,7 +78,8 @@ def main_menu():
 
     print("1 - Background Music\n")
     print("2 - Create Tree\n")
-    print("3 - Exit the program\n\n")
+    print("3 - Adjust volume\n")
+    print("4 - Exit the program\n\n")
 
     option = int(input("Select a number option: "))
 
@@ -81,10 +89,20 @@ def main_menu():
         case 2:
             try_generate_tree()
         case 3:
+            adjust_volume_menu()
+        case 4:
             exit()
         case _:
             print("Select valid option")
             main_menu()
+
+def adjust_volume_menu():
+    clear_console()
+    print("11 - Exit")
+    value = int(input("Adjust volume(1 - 10): "))
+    if value == 11:
+        main_menu()
+    adjust_volume(value)
 
 def try_generate_tree():
     try:
