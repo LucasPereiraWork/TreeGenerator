@@ -2,7 +2,6 @@ import os
 import random
 import pygame
 import sys
-
 from typing import List, Tuple
 
 
@@ -125,11 +124,11 @@ def try_generate_tree():
         print(f"Error: {e}")
         print("Please enter a valid positive number for height.")
 
-    main_menu()
+    #main_menu()
 
 def generate_tree(height: int, symbol: str = '*') -> List[Tuple[str, List[Tuple[str, str]]]]:
     """
-    Generate and display a Christmas tree in the console.
+    Generate and display a Christmas tree in the console using emojis and Unicode decorations.
     Returns the tree pattern for potential PNG conversion.
     """
     # ANSI color codes
@@ -145,8 +144,8 @@ def generate_tree(height: int, symbol: str = '*') -> List[Tuple[str, List[Tuple[
     white = '\033[37m'    # White color
     reset = '\033[0m'     # Reset color code
     
-    # Non-emoji decorations (more reliable for PNG output)
-    decorations = ['*', '+', 'o', '°', '⚹', '✦', '✯', '✷']
+    # Emoji decorations
+    decorations = ['🎄', '🎁', '⭐', '✨', '🎀', '🌟', '❄️', '🎅']
     
     # Store tree pattern for PNG conversion
     tree_pattern = []
@@ -161,19 +160,17 @@ def generate_tree(height: int, symbol: str = '*') -> List[Tuple[str, List[Tuple[
         
         # Handle the first row (top of tree) specially
         if i == 0:
-            color = staryellow
-            row.append(f"{color}✯{reset}")
-            pattern_row.append(('✯', color))
+            row.append(f"{staryellow}⭐{reset}")
+            pattern_row.append(('⭐', staryellow))
         else:
             # Generate other rows
             for j in range(2 * i + 1):
                 decoration_chance = random.random()
-                if decoration_chance < 0.1:  # 10% chance for decoration
-                    color = random.choice(colors)
+                if decoration_chance < 0.2:  # 20% chance for emoji decoration
                     decoration = random.choice(decorations)
-                    row.append(f"{color}{decoration}{reset}")
-                    pattern_row.append((decoration, color))
-                elif decoration_chance < 0.3:  # 20% chance for colored symbol
+                    row.append(decoration)
+                    pattern_row.append((decoration, ''))
+                elif decoration_chance < 0.4:  # 20% chance for colored symbol
                     color = random.choice(colors)
                     row.append(f"{color}{symbol}{reset}")
                     pattern_row.append((symbol, color))
@@ -185,102 +182,128 @@ def generate_tree(height: int, symbol: str = '*') -> List[Tuple[str, List[Tuple[
         print(f"{spaces}{''.join(row)}")
         tree_pattern.append((spaces, pattern_row))
     
-    # Add a simple decorative base (using stars and plus signs)
+    # Add a simple decorative base
     base_width = min(2 * (height - 1) + 1, 8)
-    base_pattern = []
-    for i in range(base_width):
-        color = random.choice(colors)
-        symbol = random.choice(['*', '+', '✦'])
-        base_pattern.append((symbol, color))
+    base_pattern = [(random.choice(['🪵', '🪓']), '') for _ in range(base_width)]
     
     # Center the base
     base_space = " " * (height - len(base_pattern)//2 - 1)
     base_row = []
-    for symbol, color in base_pattern:
-        base_row.append(f"{color}{symbol}{reset}")
+    for symbol, _ in base_pattern:
+        base_row.append(symbol)
     print(base_space + "".join(base_row))
     tree_pattern.append((base_space, base_pattern))
     
     # Add the trunk
     trunk_height = height // 3
     trunk_width = height // 3
-    brown = '\033[33m'  # Brown color for trunk
     for i in range(trunk_height):
         trunk_space = " " * (height - trunk_width // 2 - 1)
-        trunk_row = []
-        pattern_trunk = []
-        for j in range(trunk_width):
-            trunk_row.append(f"{brown}#{reset}")
-            pattern_trunk.append(('#', brown))
+        trunk_row = ['🪵'] * trunk_width
         print(trunk_space + "".join(trunk_row))
-        tree_pattern.append((trunk_space, pattern_trunk))
+        tree_pattern.append((trunk_space, [(char, '') for char in trunk_row]))
     
     return tree_pattern
 
-def save_as_png(tree_pattern: List[Tuple[str, List[Tuple[str, str]]]], height: int, filename: str = 'christmas_tree.png') -> bool:
-    """
-    Save the tree pattern as a PNG file with proper centering.
-    """
-    try:
-        from PIL import Image, ImageDraw, ImageFont
-    except ImportError:
-        print("Error: Pillow library not installed. Please install it using:")
-        print("pip install Pillow")
-        return False
 
-    # Image dimensions with padding
-    char_width = 30  # Increased for better spacing
+def save_as_png(tree_pattern, height, filename='christmas_tree.png'):
+    from PIL import Image, ImageDraw, ImageFont
+    import platform
+    
+    # Set dimensions
+    char_width = 40  # Increased for emoji visibility
     char_height = 40
-    padding = 100  # Additional padding around the tree
-    
-    # Calculate maximum tree width
-    max_tree_width = max(len(pattern_row) for _, pattern_row in tree_pattern) * char_width
-    
-    # Set image dimensions with padding
-    img_width = max_tree_width + (2 * padding)
+    padding = 100
+    img_width = (max(len(row[1]) for row in tree_pattern) * char_width) + (2 * padding)
     img_height = (len(tree_pattern) * char_height) + (2 * padding)
-    
-    # Create image with dark blue background
+
+    # Create the image with a dark background
     image = Image.new('RGB', (img_width, img_height), (10, 20, 40))
     draw = ImageDraw.Draw(image)
-    
-    # Try to load a font that supports decorative characters
+
+    # Try to find and load a system emoji font
     try:
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 25)
-    except:
-        try:
-            font = ImageFont.truetype("arial.ttf", 25)
-        except:
-            font = ImageFont.load_default()
-    
-    # Color mapping from ANSI to RGB
+        if platform.system() == 'Windows':
+            possible_fonts = [
+                "seguiemj.ttf",  # Segoe UI Emoji
+                "segoe ui emoji.ttf",
+                "C:\\Windows\\Fonts\\seguiemj.ttf"
+            ]
+        elif platform.system() == 'Darwin':  # macOS
+            possible_fonts = [
+                "/System/Library/Fonts/Apple Color Emoji.ttc",
+                "/System/Library/Fonts/AppleColorEmoji.ttf"
+            ]
+        else:  # Linux
+            possible_fonts = [
+                "/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf",
+                "/usr/share/fonts/noto-emoji/NotoColorEmoji.ttf",
+                "/usr/share/fonts/google-noto/NotoColorEmoji.ttf",
+                "/usr/share/fonts/emoji/NotoColorEmoji.ttf"
+            ]
+
+        font = None
+        for font_path in possible_fonts:
+            try:
+                font = ImageFont.truetype(font_path, 30)
+                print(f"Successfully loaded emoji font: {font_path}")
+                break
+            except OSError:
+                continue
+
+        if font is None:
+            raise Exception("No emoji font found")
+
+    except Exception as e:
+        print(f"Warning - font loading issue: {e}")
+        print("Attempting to use system default font...")
+        font = ImageFont.load_default()
+
+    # Define colors
     color_map = {
-        '\033[31m': (255, 0, 0),     # Red
-        '\033[32m': (0, 255, 0),     # Green
-        '\033[33m': (255, 255, 0),   # Yellow
-        '\033[34m': (0, 0, 255),     # Blue
-        '\033[35m': (255, 0, 255),   # Purple
-        '\033[36m': (0, 255, 255),   # Cyan
-        '\033[37m': (255, 255, 255), # White
+        '\033[31m': (255, 50, 50),    # Red
+        '\033[32m': (50, 255, 50),    # Green
+        '\033[33m': (255, 255, 50),   # Yellow
+        '\033[34m': (50, 50, 255),    # Blue
+        '\033[35m': (255, 50, 255),   # Purple
+        '\033[36m': (50, 255, 255),   # Cyan
+        '\033[37m': (255, 255, 255),  # White
     }
-    
-    # Draw tree centered
-    y = padding  # Start with vertical padding
-    for spaces, row in tree_pattern:
-        # Calculate x position to center the row
-        row_width = len(row) * char_width
-        x = (img_width - row_width) // 2
-        
-        for char, color in row:
-            # Draw the character
-            draw.text((x, y), char, font=font, fill=color_map[color])
-            x += char_width
-        y += char_height
-    
-    # Save image
-    image.save(filename)
-    print(f"Tree saved as {filename}")
-    return True
+
+    # Draw tree
+    y = padding
+    try:
+        for spaces, row in tree_pattern:
+            # Center the row
+            total_row_width = len(row) * char_width
+            x = (img_width - total_row_width) // 2
+
+            for char, color in row:
+                # Preserve emoji characters
+                rgb_color = color_map.get(color, (255, 255, 255))
+                
+                # Handle both emojis and regular characters
+                try:
+                    draw.text((x, y), char, font=font, fill=rgb_color, embedded_color=True)
+                except:
+                    # Fallback for older Pillow versions
+                    draw.text((x, y), char, font=font, fill=rgb_color)
+                
+                x += char_width
+            y += char_height
+
+        # Save image
+        image.save(filename)
+        print(f"Tree successfully saved as {filename}")
+        print("Note: If emojis aren't visible, please install an emoji font:")
+        print("Windows: Segoe UI Emoji")
+        print("macOS: Apple Color Emoji")
+        print("Linux: Noto Color Emoji (package: fonts-noto-color-emoji)")
+        return True
+
+    except Exception as e:
+        print(f"Error creating image: {e}")
+        return False
 
 def main():
 
