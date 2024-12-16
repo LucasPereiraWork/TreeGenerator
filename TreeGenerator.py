@@ -36,12 +36,12 @@ def select_background_music():
 
     clear_console()
 
-    print("1 - Cristano_s_Ronaldo_siiiiii_but_it_s_jingle_bell_rock\n")
-    print("2 - Feliz_Bottom_Jeans_-_Jose_Feliciano_1970\n")
-    print("3 - toad_sings_all_i_want_for_christmas_is_you\n")
-    print("4 - Ed_Sheeran_Elton_John_-_Merry_Christmas_Official_Video\n")
-    print("5 - Jose_Feliciano_-_Feliz_Navidad_Official_Audio\n")
-    print("6 - Mariah_Carey_-_All_I_Want_for_Christmas_Is_You_Make_My_Wish_Come_True_Edition\n")
+    print("1 - music 1\n")
+    print("2 - music 2\n")
+    print("3 - music 3\n")
+    print("4 - music 4\n")
+    print("5 - music 5\n")
+    print("6 - music 6\n")
     print("7 - Exit to main menu\n\n")
 
     songpath = 'Songs'
